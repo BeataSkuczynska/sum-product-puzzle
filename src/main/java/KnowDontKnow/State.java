@@ -1,3 +1,5 @@
+package KnowDontKnow;
+
 public class State {
 	private int numA, numB, sum, sumsquares;
 	

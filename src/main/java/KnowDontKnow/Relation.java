@@ -1,3 +1,5 @@
+package KnowDontKnow;
+
 public class Relation {
 	private State first, second;
 	

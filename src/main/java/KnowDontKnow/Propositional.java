@@ -1,3 +1,4 @@
+package KnowDontKnow;
 
 public class Propositional extends Formula {
 	

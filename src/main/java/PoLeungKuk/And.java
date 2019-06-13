@@ -1,3 +1,5 @@
+package PoLeungKuk;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -11,11 +13,8 @@ public class And extends Formula {
 	
 	@Override
 	public boolean evaluate(KripkeModel model, State s) {
-		Iterator<Formula> iter = formulas.iterator();
-		
-		while(iter.hasNext()) {
-			Formula f = iter.next();
-			
+
+		for (Formula f : formulas) {
 			if (!f.evaluate(model, s)) {
 				return false;
 			}
@@ -23,7 +22,7 @@ public class And extends Formula {
 		
 		return true;
 	}
-	
+
 	public ArrayList<Formula> getFormulas() {
 		return formulas;
 	}

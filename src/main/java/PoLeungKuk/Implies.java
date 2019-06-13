@@ -1,3 +1,4 @@
+package PoLeungKuk;
 
 public class Implies extends Formula {
 	
@@ -9,7 +10,7 @@ public class Implies extends Formula {
 	}
 	
 	@Override
-	public boolean evaluate(KripkeModel model, State s) {		
+	public boolean evaluate(KripkeModel model, State s) {
 		if(!f1.evaluate(model, s)) {
 			return true;
 		} else {

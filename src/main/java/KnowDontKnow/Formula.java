@@ -1,3 +1,4 @@
+package KnowDontKnow;
 
 public abstract class Formula {
 	public abstract boolean evaluate(KripkeModel model, State s);

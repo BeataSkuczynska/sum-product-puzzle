@@ -1,3 +1,8 @@
+package KnowDontKnow;
+
+import KnowDontKnow.Formula;
+import KnowDontKnow.KripkeModel;
+import KnowDontKnow.State;
 
 public class Not extends Formula {
 	
