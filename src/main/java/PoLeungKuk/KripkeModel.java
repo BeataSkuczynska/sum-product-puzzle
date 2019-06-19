@@ -4,20 +4,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class KripkeModel {
-	private ArrayList<State> states;
+	private ArrayList<State> initialStates;
+	private ArrayList<State> currentStates = new ArrayList<State>();
 	private ArrayList<Relation> relationsX;
 	private ArrayList<Relation> relationsY;
 	private ArrayList<Relation> relationsZ;
 
 	public KripkeModel(ArrayList<State> states, ArrayList<Relation> relationsX, ArrayList<Relation> relationsY, ArrayList<Relation> relationsZ) {
-		this.states = states;
+		this.initialStates = states;
 		this.relationsX = relationsX;
 		this.relationsY = relationsY;
 		this.relationsZ = relationsZ;
+		states.forEach(state -> this.currentStates.add(new State(state.getNumX(), state.getNumY(), state.getNumZ())));
 	}
 
 	public ArrayList<State> getStatesList() {
-		return states;
+		return currentStates;
 	}
 
 	public ArrayList<Relation> getRelationsX() {
@@ -33,9 +35,28 @@ public class KripkeModel {
 	}
 
 	public void addState(State s) {
-		states.add(s);
+		initialStates.add(s);
 	}
-	
+
+	public void removeFromCurrentStates(State s){
+		currentStates.removeIf(state -> state.equals(s));
+	}
+
+	public void compareAndRemove(ArrayList<State> toDelete) {
+		toDelete.forEach(this::removeFromCurrentStates);
+
+		ArrayList<State> toDeleteFromInitial = new ArrayList<State>();
+
+		for (State stateI : initialStates){
+			if (currentStates.stream().noneMatch(stateC -> stateC.equals(stateI))){
+				toDeleteFromInitial.add(stateI);
+			}
+		}
+
+		toDeleteFromInitial.forEach(this::removeState);
+		this.currentStates = this.initialStates;
+	}
+
 	public void removeState(State s) {
 		Iterator<Relation> iterX = relationsX.iterator();
 		Iterator<Relation> iterY = relationsY.iterator();
@@ -77,8 +98,17 @@ public class KripkeModel {
 		/* Now all incedent accessibility relations have been removed.
 		 * Time to remove the actual state
 		 */
-		
-		states.remove(s);
+
+		/* remove all incedent accessibility relations of X
+		 * before the state is removed
+		 */
+		initialStates.remove(s);
+
+//		currentStates.forEach(state -> {
+//			if (state.equals(s)){
+//				currentStates.remove(state);
+//			}
+//		});
 	}
 	
 //	public void pAnnouncementAB(PoLeungKuk.Formula ann) {
@@ -101,7 +131,7 @@ public class KripkeModel {
 //			removeState(s);
 //		}
 		
-//		ArrayList<PoLeungKuk.State> statesCopy = new ArrayList<PoLeungKuk.State>(states);
+//		ArrayList<PoLeungKuk.State> statesCopy = new ArrayList<PoLeungKuk.State>(initialStates);
 //		Iterator<PoLeungKuk.State> iter = statesCopy.iterator();
 //		
 //		while(iter.hasNext()) {
@@ -114,23 +144,23 @@ public class KripkeModel {
 //		}
 //	}
 
-	public void pAnnouncement(Formula ann) {
+	public ArrayList<State> pAnnouncement(Formula ann) {
 		ArrayList<State> toDelete = new ArrayList<State>();
 
-		states.forEach(state -> {
+		initialStates.forEach(state -> {
 			if(!ann.evaluate(this, state)) {
 				toDelete.add(state);
 			}
 		});
 
-		toDelete.forEach(this::removeState);
+		return toDelete;
 	}
 	
 	public String toString() {
 		/*
 			TODO: Currently prints only KnowDontKnow.KnowDontKnow elements
 		 */
-		Iterator<State> iterS = states.iterator();
+		Iterator<State> iterS = initialStates.iterator();
 		Iterator<Relation> iterA = relationsX.iterator();
 		Iterator<Relation> iterB = relationsY.iterator();
 		
@@ -165,5 +195,6 @@ public class KripkeModel {
 		output.append(")");
 		return output.toString();
 	}
+
 
 }

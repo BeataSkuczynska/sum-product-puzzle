@@ -31,4 +31,8 @@ public class State {
 	public int getNumZ() {
 		return numZ;
 	}
+
+	public boolean equals(State s) {
+		return s.getNumX() == this.numX && s.getNumY() == this.numY && s.getNumZ() == this.numZ;
+	}
 }

@@ -48,24 +48,45 @@ public class PoLeungKuk {
         System.out.println(relationsZ);
 
 
-        /**Initialize Kripke model**/
+        /**Initialize Kripke models**/
         KripkeModel km = new KripkeModel(states, relationsX, relationsY, relationsZ);
         int agentThatKnows;
 
         agentThatKnows = 0; /** Xeno */
         knowYZdifferent(agentThatKnows, states, km);
-        System.out.println("Agent X announces 'I know that Y and Z have different numbers'.");
-        System.out.println("It is now common knowledge that these pairs of numbers are possible:");
-        System.out.println(states);
+        System.out.println("Xeno announces 'I know that Yvo and Zeno have different numbers'.");
+        System.out.println("It is now common knowledge that those sets of numbers are possible:");
+        System.out.println(km.getStatesList());
         System.out.println("");
 
-        agentThatKnows = 1; /** Xeno */
+        agentThatKnows = 1; /** Yvo */
         knowXYZdifferent(agentThatKnows, states, km);
-        System.out.println("Agent Y announces 'I already knew that all our numbers are different'.");
+        System.out.println("Yvo announces 'I already knew that all our numbers are different'.");
         System.out.println("It is now common knowledge that these pairs of numbers are possible:");
-        System.out.println(states);
+        System.out.println(km.getStatesList());
         System.out.println("");
 
+        agentThatKnows = 2; /** Zeno */
+        knows(agentThatKnows, states, km);
+        System.out.println("Zeno announces 'Aha. Now I know all three numbers'.");
+        System.out.println("It is now common knowledge that these pairs of numbers are possible:");
+        System.out.println(km.getStatesList());
+        System.out.println("");
+    }
+
+    private static void knows(int agentThatKnows, ArrayList<State> states, KripkeModel model) {
+        ArrayList<Formula> annFormula = new ArrayList<Formula>();
+
+        states.forEach(state -> {
+            Propositional prop = new Propositional(state);
+            Formula knows = new Knowledge(agentThatKnows, prop);
+            Formula f = new Implies(prop,knows);
+            annFormula.add(f);
+        });
+
+        Formula publicAnnouncement = new And(annFormula);
+        ArrayList<State> toDelete = model.pAnnouncement(publicAnnouncement);
+        toDelete.forEach(model::removeState);
 
     }
 
@@ -81,7 +102,8 @@ public class PoLeungKuk {
         });
 
         Formula publicAnnouncement = new And(annFormula);
-        model.pAnnouncement(publicAnnouncement);
+        ArrayList<State> toDelete = model.pAnnouncement(publicAnnouncement);
+        model.compareAndRemove(toDelete);
     }
 
     public static void knowYZdifferent(int agentThatKnows, ArrayList<State> states, KripkeModel model){
@@ -96,6 +118,7 @@ public class PoLeungKuk {
         });
 
         Formula publicAnnouncement = new And(annFormula);
-        model.pAnnouncement(publicAnnouncement);
+        ArrayList<State> toDelete = model.pAnnouncement(publicAnnouncement);
+        toDelete.forEach(model::removeFromCurrentStates);
     }
 }

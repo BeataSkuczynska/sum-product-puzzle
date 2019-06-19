@@ -18,7 +18,7 @@ public class Propositional extends Formula {
 	
 
 	public boolean evaluate(KripkeModel model, State s) {
-		return(s.getNumX() == a && s.getNumY() == b);
+		return(s.getNumX() == a && s.getNumY() == b && s.getNumZ()  == c);
 	}
 
 	

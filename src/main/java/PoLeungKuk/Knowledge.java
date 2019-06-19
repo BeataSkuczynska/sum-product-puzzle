@@ -50,20 +50,23 @@ public class Knowledge extends Formula {
 
 	public boolean evaluate(KripkeModel model, State s) {
 		ArrayList<State> connected = new ArrayList<State>();
-		ArrayList<Relation> relations;
+		ArrayList<Relation> relations = new ArrayList<>();
 
 		if(this.agent == 0) {
 			relations = model.getRelationsX();
-		} else {
+		} else if (this.agent == 1) {
 			relations = model.getRelationsY();
+		} else if (this.agent == 2) {
+			relations = model.getRelationsZ();
 		}
+
+		connected.add(s);
 
 		relations.forEach(relation -> {
 			if(relation.isIncedent(s)) {
 				connected.add(relation.connectedState(s));
 			}
 		});
-
 
 		for (State t : connected) {
 			if (!f.evaluate(model, t)) {
