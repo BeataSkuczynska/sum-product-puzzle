@@ -41,37 +41,34 @@ public class PoLeungKuk {
                 }
                 });
         });
-        System.out.println(states);
-        System.out.println(states.size());
-        System.out.println(relationsX);
-        System.out.println(relationsY);
-        System.out.println(relationsZ);
+//        System.out.println("Initial states :" + states);
+        System.out.println("Number of states: " + states.size() + "\n");
 
 
-        /**Initialize Kripke models**/
+        /*Initialize Kripke model*/
         KripkeModel km = new KripkeModel(states, relationsX, relationsY, relationsZ);
         int agentThatKnows;
 
-        agentThatKnows = 0; /** Xeno */
+        agentThatKnows = 0; /* Xeno */
         knowYZdifferent(agentThatKnows, states, km);
         System.out.println("Xeno announces 'I know that Yvo and Zeno have different numbers'.");
         System.out.println("It is now common knowledge that those sets of numbers are possible:");
-        System.out.println(km.getStatesList());
-        System.out.println("");
+//       System.out.println(km.getStatesList());
+        System.out.println("Number of states: " + km.getStatesList().size() + "\n");
 
-        agentThatKnows = 1; /** Yvo */
+        agentThatKnows = 1; /* Yvo */
         knowXYZdifferent(agentThatKnows, states, km);
         System.out.println("Yvo announces 'I already knew that all our numbers are different'.");
         System.out.println("It is now common knowledge that these pairs of numbers are possible:");
         System.out.println(km.getStatesList());
-        System.out.println("");
+        System.out.println("Number of states: " + km.getStatesList().size() + "\n");
 
-        agentThatKnows = 2; /** Zeno */
+        agentThatKnows = 2; /* Zeno */
         knows(agentThatKnows, states, km);
         System.out.println("Zeno announces 'Aha. Now I know all three numbers'.");
         System.out.println("It is now common knowledge that these pairs of numbers are possible:");
         System.out.println(km.getStatesList());
-        System.out.println("");
+        System.out.println("Number of states: " + km.getStatesList().size() + "\n");
     }
 
     private static void knows(int agentThatKnows, ArrayList<State> states, KripkeModel model) {
