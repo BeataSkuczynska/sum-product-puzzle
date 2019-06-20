@@ -34,7 +34,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>PoLeunKuk.PoLeunKuk</mainClass>
+                            <mainClass>PoLeungKuk.PoLeungKuk</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
