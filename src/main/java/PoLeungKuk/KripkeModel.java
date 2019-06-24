@@ -103,46 +103,7 @@ public class KripkeModel {
 		 * before the state is removed
 		 */
 		initialStates.remove(s);
-
-//		currentStates.forEach(state -> {
-//			if (state.equals(s)){
-//				currentStates.remove(state);
-//			}
-//		});
 	}
-	
-//	public void pAnnouncementAB(PoLeungKuk.Formula ann) {
-//		ArrayList<StateAB> toDelete = new ArrayList<StateAB>();
-//		Iterator<StateAB> stateIter = statesAB.iterator();
-//
-//
-//		while(stateIter.hasNext()) {
-//			StateAB s = stateIter.next();
-//
-//			if(!ann.evaluate(this, s)) {
-//				toDelete.add(s);
-//			}
-//		}
-//
-//		Iterator<StateAB> deleteIter = toDelete.iterator();
-//
-//		while(deleteIter.hasNext()) {
-//			StateAB s = deleteIter.next();
-//			removeState(s);
-//		}
-		
-//		ArrayList<PoLeungKuk.State> statesCopy = new ArrayList<PoLeungKuk.State>(initialStates);
-//		Iterator<PoLeungKuk.State> iter = statesCopy.iterator();
-//		
-//		while(iter.hasNext()) {
-//			PoLeungKuk.State s = iter.next();
-//			
-//			//System.out.println(s + "" + ann.evaluate(this, s));
-//			if(!ann.evaluate(this, s)) {
-//				removeState(s);
-//			}
-//		}
-//	}
 
 	public ArrayList<State> pAnnouncement(Formula ann) {
 		ArrayList<State> toDelete = new ArrayList<State>();
