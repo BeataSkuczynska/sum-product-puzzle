@@ -1,8 +1,13 @@
 package PoLeungKuk;
 
-public abstract class Formula {
-	public abstract boolean evaluate(KripkeModel model, State s);
+abstract class Formula {
 
-	
-	public abstract String toString();
+    /**
+     * Abstract class modelling logical formula.
+     * Evaluation of the formula is proceeded given Kripke model and one of its states.
+     */
+
+    public abstract boolean evaluate(KripkeModel model, State state);
+
+    public abstract String toString();
 }

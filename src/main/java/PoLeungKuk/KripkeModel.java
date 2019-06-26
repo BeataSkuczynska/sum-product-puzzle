@@ -3,159 +3,148 @@ package PoLeungKuk;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class KripkeModel {
-	private ArrayList<State> initialStates;
-	private ArrayList<State> currentStates = new ArrayList<State>();
-	private ArrayList<Relation> relationsX;
-	private ArrayList<Relation> relationsY;
-	private ArrayList<Relation> relationsZ;
+class KripkeModel {
 
-	public KripkeModel(ArrayList<State> states, ArrayList<Relation> relationsX, ArrayList<Relation> relationsY, ArrayList<Relation> relationsZ) {
-		this.initialStates = states;
-		this.relationsX = relationsX;
-		this.relationsY = relationsY;
-		this.relationsZ = relationsZ;
-		states.forEach(state -> this.currentStates.add(new State(state.getNumX(), state.getNumY(), state.getNumZ())));
-	}
+    /**
+     * Class modelling Kripke model. There are both current and initial states, because the announcement of 2nd step
+     * of Po Leung Kuk is about the initial states, not the ones after 1st announcement.
+     */
+    private final ArrayList<State> initialStates;
+    private ArrayList<State> currentStates = new ArrayList<State>();
+    private final ArrayList<Relation> relationsX;
+    private final ArrayList<Relation> relationsY;
+    private final ArrayList<Relation> relationsZ;
 
-	public ArrayList<State> getStatesList() {
-		return currentStates;
-	}
+    public KripkeModel(ArrayList<State> states, ArrayList<Relation> relX, ArrayList<Relation> relY, ArrayList<Relation> relZ) {
+        this.initialStates = states;
+        this.relationsX = relX;
+        this.relationsY = relY;
+        this.relationsZ = relZ;
+        states.forEach(state -> this.currentStates.add(new State(state.getNumX(), state.getNumY(), state.getNumZ())));
+    }
 
-	public ArrayList<Relation> getRelationsX() {
-		return relationsX;
-	}
-	
-	public ArrayList<Relation> getRelationsY() {
-		return relationsY;
-	}
+    public ArrayList<State> getStatesList() {
+        return currentStates;
+    }
 
-	public ArrayList<Relation> getRelationsZ() {
-		return relationsZ;
-	}
+    public ArrayList<Relation> getRelationsX() {
+        return relationsX;
+    }
 
-	public void addState(State s) {
-		initialStates.add(s);
-	}
+    public ArrayList<Relation> getRelationsY() {
+        return relationsY;
+    }
 
-	public void removeFromCurrentStates(State s){
-		currentStates.removeIf(state -> state.equals(s));
-	}
+    public ArrayList<Relation> getRelationsZ() {
+        return relationsZ;
+    }
 
-	public void compareAndRemove(ArrayList<State> toDelete) {
-		toDelete.forEach(this::removeFromCurrentStates);
+    public void addState(State s) {
+        currentStates.add(s);
+    }
 
-		ArrayList<State> toDeleteFromInitial = new ArrayList<State>();
+    public void removeFromCurrentStates(State s) {
+        currentStates.removeIf(state -> state.equals(s));
+    }
 
-		for (State stateI : initialStates){
-			if (currentStates.stream().noneMatch(stateC -> stateC.equals(stateI))){
-				toDeleteFromInitial.add(stateI);
-			}
-		}
+    /**
+     * Essential part of 2nd step. Compares currentStates (states after 1st announcement) and states to delete after
+     * 2nd announcement and leaves only those who are not for deleating by 2nd announcement. After this step
+     * currentStates are the same set as initialStates, because this distinction is no longer needed.
+     * @param toDelete list of states to delete after 2nd announcement
+     */
+    public void compareAndRemove(ArrayList<State> toDelete) {
+        toDelete.forEach(this::removeFromCurrentStates);
 
-		toDeleteFromInitial.forEach(this::removeState);
-		this.currentStates = this.initialStates;
-	}
+        ArrayList<State> toDeleteFromInitial = new ArrayList<State>();
 
-	public void removeState(State s) {
-		Iterator<Relation> iterX = relationsX.iterator();
-		Iterator<Relation> iterY = relationsY.iterator();
-		Iterator<Relation> iterZ = relationsZ.iterator();
+        for (State stateI : initialStates) {
+            if (currentStates.stream().noneMatch(stateC -> stateC.equals(stateI))) {
+                toDeleteFromInitial.add(stateI);
+            }
+        }
 
-		while(iterX.hasNext()) {
-			/* remove all incedent accessibility relations of X
-			 * before the state is removed
-			 */
-			Relation relX = iterX.next();
-			
-			if(relX.isIncedent(s)) {
-				iterX.remove();
-			}
-		}
-		
-		while(iterY.hasNext()) {
-			/* remove all incedent accessibility relations of Y
-			 * before the state is removed
-			 */
-			Relation relY = iterY.next();
-			
-			if(relY.isIncedent(s)) {
-				iterY.remove();
-			}
-		}
+        toDeleteFromInitial.forEach(this::removeState);
+        this.currentStates = this.initialStates;
+    }
 
-		while(iterZ.hasNext()) {
-			/* remove all incedent accessibility relations of Z
-			 * before the state is removed
-			 */
-			Relation relZ = iterZ.next();
+    public void removeState(State state) {
+        Iterator<Relation> iterX = relationsX.iterator();
+        Iterator<Relation> iterY = relationsY.iterator();
+        Iterator<Relation> iterZ = relationsZ.iterator();
 
-			if(relZ.isIncedent(s)) {
-				iterZ.remove();
-			}
-		}
-		
-		/* Now all incedent accessibility relations have been removed.
-		 * Time to remove the actual state
-		 */
+        while (iterX.hasNext()) {
+            /* remove all incedent accessibility relations of X
+             * before the state is removed
+             */
+            Relation relX = iterX.next();
 
-		/* remove all incedent accessibility relations of X
-		 * before the state is removed
-		 */
-		initialStates.remove(s);
-	}
+            if (relX.isIncedent(state)) {
+                iterX.remove();
+            }
+        }
 
-	public ArrayList<State> pAnnouncement(Formula ann) {
-		ArrayList<State> toDelete = new ArrayList<State>();
+        while (iterY.hasNext()) {
+            /* remove all incedent accessibility relations of Y
+             * before the state is removed
+             */
+            Relation relY = iterY.next();
 
-		initialStates.forEach(state -> {
-			if(!ann.evaluate(this, state)) {
-				toDelete.add(state);
-			}
-		});
+            if (relY.isIncedent(state)) {
+                iterY.remove();
+            }
+        }
 
-		return toDelete;
-	}
-	
-	public String toString() {
-		/*
-			TODO: Currently prints only KnowDontKnow.KnowDontKnow elements
-		 */
-		Iterator<State> iterS = initialStates.iterator();
-		Iterator<Relation> iterA = relationsX.iterator();
-		Iterator<Relation> iterB = relationsY.iterator();
-		
-		StringBuilder output = new StringBuilder("States: (");
-		output.append(iterS.next());
-		
-		while(iterS.hasNext()) {
-			output.append(", ");
-			output.append(iterS.next());
-		}
-		
-		output.append("), Relations A: (");
-		if(iterA.hasNext()) {
-			output.append(iterA.next());
-		}
-		
-		while(iterA.hasNext()) {
-			output.append(", ");
-			output.append(iterA.next());
-		}
-		
-		output.append("), Relations B: (");
-		if(iterB.hasNext()) {
-			output.append(iterB.next());
-		}
-		
-		while(iterB.hasNext()) {
-			output.append(", ");
-			output.append(iterB.next());
-		}
-		
-		output.append(")");
-		return output.toString();
-	}
+        while (iterZ.hasNext()) {
+            /* remove all incedent accessibility relations of Z
+             * before the state is removed
+             */
+            Relation relZ = iterZ.next();
+
+            if (relZ.isIncedent(state)) {
+                iterZ.remove();
+            }
+        }
+
+        /* Now all incedent accessibility relations have been removed.
+         * Time to remove the actual state
+         */
+        initialStates.remove(state);
+    }
+
+    public ArrayList<State> publicAnnouncement(Formula announcement) {
+        ArrayList<State> toDelete = new ArrayList<State>();
+
+        initialStates.forEach(state -> {
+            if (!announcement.evaluate(this, state)) {
+                toDelete.add(state);
+            }
+        });
+
+        return toDelete;
+    }
+
+    public String toString() {
+        StringBuilder output = new StringBuilder("States: (");
+
+        currentStates.forEach(state -> output.append(state).append(", "));
+        output.delete(output.length() - 2, output.length());
+
+        output.append("), Relations X: (");
+        relationsX.forEach(relation -> output.append(relation).append(", "));
+        output.delete(output.length() - 2, output.length());
+
+        output.append("), Relations Y: (");
+        relationsY.forEach(relation -> output.append(relation).append(", "));
+        output.delete(output.length() - 2, output.length());
+
+        output.append("), Relations Z: (");
+        relationsZ.forEach(relation -> output.append(relation).append(", "));
+        output.delete(output.length() - 2, output.length());
+
+        output.append(")");
+        return output.toString();
+    }
 
 
 }

@@ -6,18 +6,16 @@ import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class PoLeungKuk {
-    static int action = 0;
+class PoLeungKuk {
+    private static int action = 0;
 
     public static void main(String[] args) {
-        /*Initialize Kripke model*/
+        // Initialize Kripke model
         KripkeModel km = Init();
         System.out.println("Press 'a' to open advanced display");
 
@@ -46,7 +44,7 @@ public class PoLeungKuk {
         JButton nextButton = new JButton("Next announcement");
 
         // Add labels to JFrame
-        JLabel numberStates = new JLabel("Number of states: " + Integer.toString(km.getStatesList().size()));
+        JLabel numberStates = new JLabel("Number of states: " + km.getStatesList().size());
         JLabel announcement = new JLabel("");
         JLabel legendX = new JLabel("Xavier: Blue");
         JLabel legendY = new JLabel("Yvo: Red");
@@ -56,60 +54,53 @@ public class PoLeungKuk {
         // Add button listener to open advanced graph
         myJFrame.setFocusable(true);
         myJFrame.requestFocusInWindow();
-        myJFrame.addKeyListener( new KeyListener() {
+        myJFrame.addKeyListener(new KeyListener() {
 
             @Override
-            public void keyTyped( KeyEvent evt ) {
+            public void keyTyped(KeyEvent evt) {
             }
 
             @Override
-            public void keyPressed( KeyEvent evt ) {
-                int onlyOnce = 0;
-                if(evt.getKeyChar() == 'a' && onlyOnce == 0) {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyChar() == 'a') {
                     graph.graph.display();
-                    onlyOnce += 1;
                 }
             }
 
             @Override
-            public void keyReleased( KeyEvent evt ) {
+            public void keyReleased(KeyEvent evt) {
             }
-        } );
+        });
 
 
-        nextButton.addActionListener(new ActionListener() {
-            // If next button is clicked
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (action == 0) {
-                    // Print the first announcement, update graph and kripke model
-                    int agentThatKnows = 0; /* Xeno */
-                    knowYZdifferent(agentThatKnows, km.getStatesList(), km);
-                    graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
-                    numberStates.setText("Number of states: " + Integer.toString(km.getStatesList().size()));
-                    announcement.setText("Xavier announces 'I know that Yvo and Zeno have different numbers'.");
-                    action += 1;
-                } else if (action == 1) {
-                    // Print the second announcement, update graph and kripke model
-                    int agentThatKnows = 1; /* Yvo */
-                    knowXYZdifferent(agentThatKnows, km.getStatesList(), km);
-                    graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
-                    numberStates.setText("Number of states: " + Integer.toString(km.getStatesList().size()));
-                    announcement.setText("Yvo announces 'I already knew that all our numbers are different'.");
+        // If next button is clicked
+        nextButton.addActionListener(e -> {
+            if (action == 0) {
+                // Print the first announcement, update graph and Kripke model
+                int agentThatKnows = 0; /* Xavier */
+                knowYZdifferent(agentThatKnows, km);
+                graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
+                numberStates.setText("Number of states: " + km.getStatesList().size());
+                announcement.setText("Xavier announces 'I know that Yvo and Zeno have different numbers'.");
+                action += 1;
 
-                    action += 1;
-                } else if (action == 2) {
-                    // Print the third announcement, update graph and kripke model
-                    int agentThatKnows = 2; /* Zeno */
-                    knows(agentThatKnows, km.getStatesList(), km);
-                    graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
-                    numberStates.setText("Number of states: " + Integer.toString(km.getStatesList().size()));
-                    announcement.setText("Zeno announces 'Aha. Now I know all three numbers'.");
+            } else if (action == 1) {
+                // Print the second announcement, update graph and kripke model
+                int agentThatKnows = 1; /* Yvo */
+                knowXYZdifferent(agentThatKnows, km);
+                graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
+                numberStates.setText("Number of states: " + km.getStatesList().size());
+                announcement.setText("Yvo announces 'I already knew that all our numbers are different'.");
+                action += 1;
 
-                    action += 1;
-                } else if (action == 3) {
-                    // Do nothing
-                }
+            } else if (action == 2) {
+                // Print the third announcement, update graph and kripke model
+                int agentThatKnows = 2; /* Zeno */
+                knows(agentThatKnows, km);
+                graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
+                numberStates.setText("Number of states: " + km.getStatesList().size());
+                announcement.setText("Zeno announces 'Aha. Now I know all three numbers'.");
+                action += 1;
             }
         });
 
@@ -137,86 +128,103 @@ public class PoLeungKuk {
         System.out.println("Enter the upper bound for the sum of numbers: ");
         int length = reader.nextInt();
         reader.close();
-        System.out.println("");
         ArrayList<State> states = new ArrayList<State>();
 
-        /**Initialize states**/
-        for(int x=1; x<=length-2; x++) {
-            for(int y=1; y<=length-x-1; y++) {
+        // Initialize states
+        for (int x = 1; x <= length - 2; x++) {
+            for (int y = 1; y <= length - x - 1; y++) {
                 int z = length - x - y;
-                states.add(new State(x,y,z));
+                states.add(new State(x, y, z));
             }
         }
 
+        // Initialize relations
         ArrayList<Relation> relationsX = new ArrayList<Relation>();
         ArrayList<Relation> relationsY = new ArrayList<Relation>();
         ArrayList<Relation> relationsZ = new ArrayList<Relation>();
 
-        /**Initialize relations**/
-        states.forEach(state1 -> {
-            states.subList(states.indexOf(state1)+1,states.size()).forEach(state2 -> {
-                if(state1.getNumX() == state2.getNumX()){
-                    relationsX.add(new Relation(state1, state2));
-                }
-                if(state1.getNumY() == state2.getNumY()){
-                    relationsY.add(new Relation(state1, state2));
-                }
-                if(state1.getNumZ() == state2.getNumZ()){
-                    relationsZ.add(new Relation(state1, state2));
-                }
-            });
-        });
-        System.out.println("Number of states: " + states.size() + "\n");
-        KripkeModel km = new KripkeModel(states, relationsX, relationsY, relationsZ);
+        states.forEach(state1 -> states.subList(states.indexOf(state1) + 1, states.size()).forEach(state2 -> {
+            if (state1.getNumX() == state2.getNumX()) {
+                relationsX.add(new Relation(state1, state2));
+            }
+            if (state1.getNumY() == state2.getNumY()) {
+                relationsY.add(new Relation(state1, state2));
+            }
+            if (state1.getNumZ() == state2.getNumZ()) {
+                relationsZ.add(new Relation(state1, state2));
+            }
+        }));
 
-        return km;
+        return new KripkeModel(states, relationsX, relationsY, relationsZ);
     }
 
-    private static void knows(int agentThatKnows, ArrayList<State> states, KripkeModel model) {
+    /**
+     * Preparing the formula to evaluate after 3rd announcement and executes evaluation of it.
+     * Also, updates the Kripke model with the result of evaluation.
+     * @param agentThatKnows id of the agent that knows
+     * @param kripkeModel Kripke model
+     */
+    private static void knows(int agentThatKnows, KripkeModel kripkeModel) {
         ArrayList<Formula> annFormula = new ArrayList<Formula>();
+        ArrayList<State> states = kripkeModel.getStatesList();
 
         states.forEach(state -> {
             Propositional prop = new Propositional(state);
             Formula knows = new Knowledge(agentThatKnows, prop);
-            Formula f = new Implies(prop,knows);
+            Formula f = new Implies(prop, knows);
             annFormula.add(f);
         });
 
         Formula publicAnnouncement = new And(annFormula);
-        ArrayList<State> toDelete = model.pAnnouncement(publicAnnouncement);
-        toDelete.forEach(model::removeState);
+        ArrayList<State> toDelete = kripkeModel.publicAnnouncement(publicAnnouncement);
+        toDelete.forEach(kripkeModel::removeFromCurrentStates);
 
     }
 
-    private static void knowXYZdifferent(int agentThatKnows, ArrayList<State> states, KripkeModel model) {
+    /**
+     * Preparing the formula to evaluate after 2nd announcement and executes evaluation of it.
+     * Also, updates the Kripke model with the result of evaluation.
+     * @param agentThatKnows id of the agent that knows
+     * @param kripkeModel Kripke model
+     */
+    private static void knowXYZdifferent(int agentThatKnows, KripkeModel kripkeModel) {
         ArrayList<Formula> annFormula = new ArrayList<Formula>();
+        ArrayList<State> states = kripkeModel.getStatesList();
 
         states.forEach(state -> {
             Propositional prop = new Propositional(state);
-            Formula YZdiff = new Difference(agentThatKnows, prop);
+            Formula YZdiff = new Difference(agentThatKnows);
             Formula knows = new Knowledge(agentThatKnows, YZdiff);
-            Formula f = new Implies(prop,knows);
+            Formula f = new Implies(prop, knows);
             annFormula.add(f);
         });
 
         Formula publicAnnouncement = new And(annFormula);
-        ArrayList<State> toDelete = model.pAnnouncement(publicAnnouncement);
-        model.compareAndRemove(toDelete);
+        ArrayList<State> toDelete = kripkeModel.publicAnnouncement(publicAnnouncement);
+        kripkeModel.compareAndRemove(toDelete);
     }
 
-    public static void knowYZdifferent(int agentThatKnows, ArrayList<State> states, KripkeModel model){
-        ArrayList<Formula> annFormula = new ArrayList<Formula>();
+    /**
+     * Preparing the formula to evaluate after 1st announcement and executes evaluation of it.
+     * Also, updates the Kripke model with the result of evaluation.
+     * @param agentThatKnows id of the agent that knows
+     * @param kripkeModel Kripke model
+     */
+    private static void knowYZdifferent(int agentThatKnows, KripkeModel kripkeModel) {
+        ArrayList<Formula> announcement = new ArrayList<Formula>();
+        ArrayList<State> states = kripkeModel.getStatesList();
 
         states.forEach(state -> {
             Propositional prop = new Propositional(state);
-            Formula YZdiff = new Difference(agentThatKnows, prop);
-            Formula knows = new Knowledge(agentThatKnows, YZdiff);
-            Formula f = new Implies(prop,knows);
-            annFormula.add(f);
+            Formula diff = new Difference(agentThatKnows);
+            Formula knows = new Knowledge(agentThatKnows, diff);
+            Formula f = new Implies(prop, knows);
+            announcement.add(f);
         });
 
-        Formula publicAnnouncement = new And(annFormula);
-        ArrayList<State> toDelete = model.pAnnouncement(publicAnnouncement);
-        toDelete.forEach(model::removeFromCurrentStates);
+        Formula publicAnnouncement = new And(announcement);
+
+        ArrayList<State> toDelete = kripkeModel.publicAnnouncement(publicAnnouncement);
+        toDelete.forEach(kripkeModel::removeFromCurrentStates);
     }
 }

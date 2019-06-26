@@ -1,44 +1,40 @@
 package PoLeungKuk;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class And extends Formula {
-	
-	private ArrayList<Formula> formulas;
-	
-	public And (ArrayList<Formula> formulas) {
-		this.formulas = formulas;
-	}
-	
-	@Override
-	public boolean evaluate(KripkeModel model, State s) {
+    /**
+     * Class modelling logical conjunction.
+     */
 
-		for (Formula f : formulas) {
-			if (!f.evaluate(model, s)) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
+    private final ArrayList<Formula> formulas;
 
-	public ArrayList<Formula> getFormulas() {
-		return formulas;
-	}
-	
-	@Override
+    public And(ArrayList<Formula> formulas) {
+        this.formulas = formulas;
+    }
+
+    @Override
+    public boolean evaluate(KripkeModel model, State state) {
+
+        return formulas.stream().allMatch(formula -> formula.evaluate(model, state));
+
+    }
+
+    public ArrayList<Formula> getFormulas() {
+        return formulas;
+    }
+
+    @Override
     public String toString() {
-		Iterator<Formula> iter = formulas.iterator();
-		StringBuilder output = new StringBuilder("(");
-		output.append(iter.next());
-		
-		while(iter.hasNext()) {
-			output.append(" & ");
-			output.append(iter.next());
-		}
-		
-		output.append(")");
-		return output.toString();
-	}
+        StringBuilder output = new StringBuilder("(");
+
+        for (Formula formula : formulas) {
+            output.append(formula);
+            output.append(" & ");
+        }
+
+        output.delete(output.length() - 3, output.length());
+        output.append(")");
+        return output.toString();
+    }
 }

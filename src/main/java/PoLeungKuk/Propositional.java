@@ -1,42 +1,37 @@
 package PoLeungKuk;
 
 public class Propositional extends Formula {
-	
-	/* PoLeungKuk.Propositional formulas are of the form s # (sum is #)
-	 * or q # (sum of squares is #)
-	 *
-	 * For Po Leung Kuk version it can be also equality of ints
-	 */
-	private int a, b, c; //a > b
+
+    private final int x;
+    private final int y;
+    private final int z;
 
 
-	public Propositional(State s) {
-		this.a = s.getNumX();
-		this.b = s.getNumY();
-		this.c = s.getNumZ();
-	}
-	
+    public Propositional(State state) {
+        this.x = state.getNumX();
+        this.y = state.getNumY();
+        this.z = state.getNumZ();
+    }
 
-	public boolean evaluate(KripkeModel model, State s) {
-		return(s.getNumX() == a && s.getNumY() == b && s.getNumZ()  == c);
-	}
+    public boolean evaluate(KripkeModel model, State s) {
+        return (s.getNumX() == x && s.getNumY() == y && s.getNumZ() == z);
+    }
 
-	
-	public int getA() {
-		return a;
-	}
-	
-	public int getB() {
-		return b;
-	}
+    private int getX() {
+        return x;
+    }
 
-	public int getC() {
-		return c;
-	}
+    private int getY() {
+        return y;
+    }
+
+    private int getZ() {
+        return z;
+    }
 
 
-	@Override
-	public String toString() {
-		return "(" + getA() + "," + getB() + "," + getC()+ ")";
-	}
+    @Override
+    public String toString() {
+        return "(" + getX() + "," + getY() + "," + getZ() + ")";
+    }
 }

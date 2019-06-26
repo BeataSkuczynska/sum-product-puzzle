@@ -1,26 +1,30 @@
 package PoLeungKuk;
 
 public class Implies extends Formula {
-	
-	private Formula f1, f2;
-	
-	public Implies (Formula f1,  Formula f2) {
-		this.f1 = f1;
-		this.f2 = f2;
-	}
-	
-	@Override
-	public boolean evaluate(KripkeModel model, State s) {
-		if(!f1.evaluate(model, s)) {
-			return true;
-		} else {
-			return(f2.evaluate(model, s));
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return f1 + " -> " + f2;
-	}
+
+    /**
+     * Class modelling logical implication.
+     */
+
+    private final Formula antecedent, conclusion;
+
+    Implies(Formula antecedent, Formula conclusion) {
+        this.antecedent = antecedent;
+        this.conclusion = conclusion;
+    }
+
+    @Override
+    public boolean evaluate(KripkeModel model, State state) {
+        if (!antecedent.evaluate(model, state)) {
+            return true;
+        } else {
+            return (conclusion.evaluate(model, state));
+        }
+    }
+
+    @Override
+    public String toString() {
+        return antecedent + " -> " + conclusion;
+    }
 
 }
