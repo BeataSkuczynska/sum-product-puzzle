@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,6 +19,7 @@ public class PoLeungKuk {
     public static void main(String[] args) {
         /*Initialize Kripke model*/
         KripkeModel km = Init();
+        System.out.println("Press 'a' to open advanced display");
 
         // Use Kripke model to create a new graph
         GraphStream graph = new GraphStream(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
@@ -45,6 +48,33 @@ public class PoLeungKuk {
         // Add labels to JFrame
         JLabel numberStates = new JLabel("Number of states: " + Integer.toString(km.getStatesList().size()));
         JLabel announcement = new JLabel("");
+        JLabel legendX = new JLabel("Xavier: Blue");
+        JLabel legendY = new JLabel("Yvo: Red");
+        JLabel legendZ = new JLabel("Zeno: Green");
+
+
+        // Add button listener to open advanced graph
+        myJFrame.setFocusable(true);
+        myJFrame.requestFocusInWindow();
+        myJFrame.addKeyListener( new KeyListener() {
+
+            @Override
+            public void keyTyped( KeyEvent evt ) {
+            }
+
+            @Override
+            public void keyPressed( KeyEvent evt ) {
+                int onlyOnce = 0;
+                if(evt.getKeyChar() == 'a' && onlyOnce == 0) {
+                    graph.graph.display();
+                    onlyOnce += 1;
+                }
+            }
+
+            @Override
+            public void keyReleased( KeyEvent evt ) {
+            }
+        } );
 
 
         nextButton.addActionListener(new ActionListener() {
@@ -57,7 +87,7 @@ public class PoLeungKuk {
                     knowYZdifferent(agentThatKnows, km.getStatesList(), km);
                     graph.updateGraph(km.getStatesList(), km.getRelationsX(), km.getRelationsY(), km.getRelationsZ());
                     numberStates.setText("Number of states: " + Integer.toString(km.getStatesList().size()));
-                    announcement.setText("Xeno announces 'I know that Yvo and Zeno have different numbers'.");
+                    announcement.setText("Xavier announces 'I know that Yvo and Zeno have different numbers'.");
                     action += 1;
                 } else if (action == 1) {
                     // Print the second announcement, update graph and kripke model
@@ -86,6 +116,9 @@ public class PoLeungKuk {
         // Add buttons and text to JFrame and JPanels
         panel.add(numberStates, BorderLayout.EAST);
         panel.add(nextButton, BorderLayout.EAST);
+        panel.add(legendX, BorderLayout.EAST);
+        panel.add(legendY, BorderLayout.EAST);
+        panel.add(legendZ, BorderLayout.EAST);
         bottomText.add(announcement, BorderLayout.SOUTH);
         myJFrame.getContentPane().add(panel, BorderLayout.NORTH);
         myJFrame.getContentPane().add(bottomText, BorderLayout.SOUTH);
